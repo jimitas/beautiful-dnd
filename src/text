@@ -1,53 +1,50 @@
+import { useState, useEffect } from "react";
+import { Droppable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
+import { DragDropContext } from "react-beautiful-dnd";
 import "./App.css";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
-const items = [
-  {
-    id: "item-0",
-    content: "item 0",
-  },
-  {
-    id: "item-1",
-    content: "item 1",
-  },
-  {
-    id: "item-2",
-    content: "item 2",
-  },
-  {
-    id: "item-3",
-    content: "item 3",
-  },
-  {
-    id: "item-4",
-    content: "item 4",
-  },
-];
+/* 連番で10個生成 */
+const getItems = (count) =>
+  Array.from({ length: count }, (v, k) => k).map((k) => ({
+    id: `item-${k}`,
+    content: `item ${k}`,
+  }));
 
+/* 並び替え */
+const reorder = (list, startIndex, endIndex) => {
+  const removed = list.splice(startIndex, 1); //ドラッグ開始要素の削除
+  console.log(removed);
+  list.splice(endIndex, 0, removed[0]); //ドロップした箇所に挿入
+};
+
+/* スタイル */
 const grid = 8;
 
 const getListStyle = (isDraggingOver) => ({
-  background: isDraggingOver ? "lightblue" : "lightgray",
-  width: 250,
+  background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
+  width: 250,
 });
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: "none",
   padding: grid * 2,
   margin: `0 0 ${grid} 0`,
-  background: isDragging ? "lightgreen" : "gray",
+  background: isDragging ? "lightgreen" : "grey",
 
-  ...draggableStyle,
+  ...draggableStyle, //あらかじめ用意されている。
 });
 
-const reorder = (list, startIndex, endIndex) => {
-  const removed = list.splice(startIndex, 1);
-  list.splice(endIndex,0,removed[0])
-};
-
 function App() {
+  const [items] = useState(getItems(10));
+  // useEffect(() => {
+  //   // console.log(items);
+  //   const [test] = getItems(5);
+  //   console.log(test);
+  // }, []);
   const onDragEnd = (result) => {
+    // console.log(result);
     if (!result.destination) {
       return;
     }
